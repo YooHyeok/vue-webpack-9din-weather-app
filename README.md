@@ -1,4 +1,10 @@
-# Webpack 기본 템플릿
+
+# 프로젝트 구성 및 환경 설정
+<details>
+<summary>접기/펼치기</summary>
+<br>
+
+## Webpack 기본 템플릿
 
 __webpack__: 모듈(패키지) 번들러의 핵심 패키지<br>
 __webpack-cli__: 터미널에서 Webpack 명령(CLI)을 사용할 수 있음<br>
@@ -30,7 +36,7 @@ __autoprefixer__: 스타일에 자동으로 공급 업체 접두사(Vendor prefi
 
 <br>
 
-# 프로젝트 clone `degit`
+## 프로젝트 clone `degit`
 깃 리포지토리에서 파일만 복사해오는 도구인 degit 옵션을 사용한다.
 
 #### npx 방식
@@ -49,8 +55,10 @@ degit을 로컬 또는 전역에 설치한 뒤 degit 명령을 통해 GitHub 레
 
 <br>
 
-# npm run dev 기동 이슈
+## npm run dev 기동 이슈
 ### error:0308010C:digital envelope routines::unsupported
+
+<br>
 
 <details>
 <summary>접기/펼치기</summary>
@@ -69,8 +77,10 @@ https://github.com/browserslist/browserslist#browsers-data-updating
 <i> [webpack-dev-server] Content not from webpack is served from {프로젝트 경로}
 ```
 </details>
+<br>
 
 위 로그 이후 아래 에러 발생
+<br>
 
 <details>
 <summary>접기/펼치기</summary>
@@ -100,6 +110,8 @@ Error: error:0308010C:digital envelope routines::unsupported
 ```
 </details>
 
+<br>
+
  Node.js 17 이상에서 Webpack 4~5 버전 사용 시 자주 발생하는 OpenSSL 관련 이슈
  Node.js 17부터 OpenSSL 3이 기본이 되었고, 이전 방식으로 createHash()를 사용하는 라이브러리들이 충돌을 일으키기 때문에 발생.
 ```
@@ -125,3 +137,76 @@ Webpack의 해시 함수가 OpenSSL 3과 충돌하는 문제를 우회하는 방
   ```
   export NODE_OPTIONS=--openssl-legacy-provider
   ```
+
+</details>
+<br>
+
+# Vue-Router 설치 및 적용
+<details>
+<summary>접기/펼치기</summary>
+<br>
+
+- vue-router@4 npm 의존성 추가
+  ```bash
+  npm install vue-router@4
+  ```
+
+- [src/routes/index.js](src/routes/index.js) 파일 추가 및 코드 구성
+  createWebHashHistory() 호출한 값을 history 속성에 할당하여 hash모드를 사용한다.  
+  hash모드는 특정 페이지에서 새로고침 했을 경우 페이지를 찾을 수 없음 메시지 방지해 준다.  
+  routes 속성에 path와 컴포넌트를 매핑하여 등록해준다.
+
+  ```js
+  import { createRouter, createWebHashHistory } from 'vue-router'
+  import Home from '~/pages/Home.vue'
+
+  export default createRouter({
+    history: createWebHashHistory(),
+    routes: [
+      {
+        path: '/',
+        name: 'Home',
+        component: Home
+      }
+    ]
+  })
+  ```
+
+- [src/routes/index.js](src/main.js) 
+
+  라우팅 기능을 할 수 있도록 use() 메소드를 통해 메소드 체이닝으로 연결시켜 준다.
+  
+  ```js
+  // import Vue from "vue";
+  import { createApp } from "vue";
+  import App from "./App";
+  import router from "./routes/index";
+
+  createApp(App)
+    .use(router)
+    .mount("#app");
+  ```
+
+- [src/pages/Home.vue](src/pages/Home.vue)
+
+  ```vue
+  <template>
+    <div>
+      Home.vue Pages
+    </div>
+  </template>
+  ```
+
+- [src/Home.vue](src/App.vue)
+
+  Router를 그려줄 RouterView 태그를 App.vue 템플릿에 작성한다.
+
+  ```vue
+  <template>
+    <RouterView />
+  </template>
+
+  ```
+
+- 
+</details>
