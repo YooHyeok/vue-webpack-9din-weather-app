@@ -27,9 +27,12 @@
             alt="MainLogo" />
         </div>
         <div class="weatherData">
-          <div class="detailData">
-            <p>.weatherData>.detailData>p1</p>
-            <p>.weatherData>.detailData>p2</p>
+          <div
+            class="detailData"
+            v-for="Temporary in TemporaryData"
+            :key="Temporary.title">
+            <p>{{ Temporary.title }}</p>
+            <p>{{ Temporary.value }}</p>
           </div>
         </div>
       </div>
@@ -78,7 +81,23 @@
 <script>
 export default {
  data() {
-  
+  return {
+    // 임시 데이터
+    TemporaryData: [
+      {
+        title: '습도',
+        value: '88%'
+      },
+      {
+        title: '풍속',
+        value: '10m/s'
+      },
+      {
+        title: '풍향',
+        value: 'WS'
+      },
+    ]
+  }
  }
 }
 </script>
@@ -216,13 +235,13 @@ export default {
             line-height: 1.5;
             color: white;
 
-            &:first-child {
+            &:first-child { // p의 부모(.detailData) 기준 첫번째 요소: 첫번째 p
               font-size: 1rem;
               font-weight: 300;
               font-family: "Noto Sans KR", sans-serif;
               color: #799ed0;
             }
-            &:last-child {
+            &:last-child { // p의 부모(.detailData) 기준 마지막 요소: 마지막 p
               font-size: 1rem;
               font-weight: 300;
               font-family: "Poppins", sans-serif;
@@ -232,5 +251,6 @@ export default {
       }
     }
   }
+
 }
 </style>
