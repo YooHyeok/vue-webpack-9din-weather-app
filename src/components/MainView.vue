@@ -252,5 +252,112 @@ export default {
     }
   }
 
+  #todayWeather {
+    width: 100%;
+    height: 17.5%;
+
+    .textBox {
+      @include center-sb; // center, space-between
+      width: calc(100% - 70px);
+      height: 35%;
+      padding: 0 35px; // 위 아래 0 좌우 35px - width:calc() 에서 - 70px 한 이유.
+      font-family: 'Noto Sans KR', sans-serif;
+
+      p {
+        font-weight: 400;
+        font-size: 0.8rem;
+        color: white;
+        text-align: center;
+        
+        &:last-child {
+          font-weight: 400;
+          font-size: 0.8rem;
+          color: #0085ff;
+          cursor: pointer;
+          margin-bottom: 2px;
+        }
+      }
+    }
+
+    .timelyWeatherBox {
+      display: flex;
+      align-items: center;
+      width: calc(100% - 70px);
+      height: 65%;
+      padding: 0 30px;
+
+      .timelyWeather {
+        display: flex;
+        width: 126px;
+        height: 70px;
+        background-color: #0989ff;
+        border-radius: 20px;
+
+        .icon {
+          @include center;
+          width: 45%;
+          height: 100%;
+
+          img {
+            width: 100%;
+          }
+        }
+
+        .data {
+          @include c-center-se;
+          width: 55%;
+          height: 100%;
+
+          p {
+            color: whitesmoke;
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+
+            &.time {
+              font-size: 0.8rem; // rem: r은 root를 의미, root 폰트 크기(16px) 기준 상대값(배수) - 16px * 0.8 = 12.8px | em: 부모 혹은 자신의 font-size에 대한 상대값(배수)
+              font-weight: 200;
+              margin-top: 7.5px;
+            }
+
+            &.currentDegree {
+              font-size: 1.2rem;
+              margin-top: 7.5px;
+            }
+          }
+
+          div {
+            @include center;
+            width: 100%;
+            height: 33.33%;
+
+            img {
+              height: 55%;
+            }
+            .fall {
+              font-size: 0.9rem;
+              margin-top: 1.5px;
+            }
+          }
+        }
+      }
+    }
+  }
+  nav {
+    @include center-sb;
+    width: calc(100% - 100px);
+    height: 10%;
+    padding: 0 50px;
+
+    i {
+      color: rgb(255, 255, 255);
+      font-size: 1.15rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+          color: #799ed0;
+      }
+    }
+  }
 }
 </style>
