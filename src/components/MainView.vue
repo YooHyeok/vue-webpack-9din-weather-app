@@ -2,8 +2,8 @@
   <div class="leftContainer">
     <div id="cityNameBox">
       <div class="cityName">
-        <p>San Fransisco</p>
-        <p>Jan 28, 2022</p>
+        <p>{{ cityName }}</p>
+        <p>{{ currentTime }}</p>
       </div>
     </div>
     <div id="contentsBox">
@@ -80,12 +80,21 @@
 </template>
 <script>
 import axios from "axios"
+import dayjs from "dayjs" //  npm install dayjs
+import "dayjs/locale/ko"
+dayjs.locale("ko"); // 한국어 locale  글로벌 설정
 export default {
  data() {
   return {
+    // 현재 시간을 나타내기 위한 Dayjs 플러그인 사용
+    currentTime: dayjs().format("YYYY. MM. DD. ddd"),
+    // 상세 날씨 데이터를 받아주는 데이터 할당
+    temp: [],
+    icons: [],
+    cityName: "",
     
     // 임시 데이터
-    TemporaryData: [
+    temporaryData: [
       {
         title: '습도',
         value: '88%'
@@ -111,6 +120,8 @@ export default {
       )
       .then((response) => {
         console.log(response);
+        const {data: {name, sys: {country}}} = response
+        this.cityName = `${name} (${country})`
       })
       .catch((error) => {
         console.log(error);
