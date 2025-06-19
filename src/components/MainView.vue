@@ -79,9 +79,11 @@
   </div>
 </template>
 <script>
+import axios from "axios"
 export default {
  data() {
   return {
+    
     // 임시 데이터
     TemporaryData: [
       {
@@ -98,6 +100,21 @@ export default {
       },
     ]
   }
+ },
+ created() {
+  const API_KEY = "32c7ade76f0e3f495584cbb0d0cd1efe";
+    let initialLat = 36.5683;
+    let initialLon = 126.9778;
+    // get() 메서드를 통해서 우리가 필요로하는 API 데이터를 호출한다.
+    axios.get(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${initialLat}&lon=${initialLon}&appid=${API_KEY}&units=metric`
+      )
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
  }
 }
 </script>
@@ -130,7 +147,7 @@ export default {
           height: 33px;
           font-size: 1.35rem;
         }
-        &:first-child { /* 가장 첫번째 p태그 속성 */
+        &:last-child { /* 가장 첫번째 p태그 속성 */
           width: 160px;
           height: 19px;
           font-size: 0.9rem;
