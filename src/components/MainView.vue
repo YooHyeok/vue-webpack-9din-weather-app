@@ -42,8 +42,14 @@
         <p>시간대별 날씨 정보</p>
         <p>이번주 날씨 보기</p>
       </div>
-      <div class="timelyWeatherBox">
-        <div class="timelyWeather">
+      <div
+        ref="weatherBox"
+        class="timelyWeatherBox">
+        <!-- <div class="timelyWeather"> -->
+        <div
+          class="timelyWeather"
+          v-for="(temp, index) in arrayTemps"
+          :key="index">
           <div class="icon">
             <img
               src="~/assets/29.png"
@@ -52,18 +58,21 @@
           <!-- 날씨 api 호출시 상세 데이터를 출력할 공간 -->
           <div class="data">
             <p class="time">
-              2pm
+              {{ Unix_timestamp(temp.dt) }}
             </p>
             <p class="currentDegree">
-              32&deg;
+              {{ temp.main.temp }}&deg;
             </p>
+            <!-- <p class="currentDegree">
+              32&deg;
+            </p> -->
             <div>
               <!-- 습도 아이콘 -->
               <img
                 src="~/assets/drop.png"
                 alt="" />
               <p class="fall">
-                15%
+                {{ temp.main.humidity }}%
               </p>
             </div>
           </div>
@@ -92,6 +101,7 @@ export default {
     currentTemp: "",
     // 상세 날씨 데이터를 받아주는 데이터 할당
     temp: [],
+    arrayTemps: [],
     icons: [],
     cityName: "",
     
@@ -123,7 +133,7 @@ export default {
       .then((response) => {
         console.log(response);
         const {data: { name, sys: {country}, main: { temp, humidity, feels_like }, wind: { speed } } } = response
-        
+
         this.cityName = `${name} (${country})`
 
         this.currentTemp = temp
@@ -136,7 +146,53 @@ export default {
       .catch((error) => {
         console.log(error);
       });
- }
+
+    // 시간대별 날씨 데이터 제어
+    axios.get(
+      `https://api.openweathermap.org/data/2.5/forecast?lat=${initialLat}&lon=${initialLon}&appid=${API_KEY}&units=metric`
+    )
+    .then((response) => {
+      console.log(response);
+      const {data: { list } } = response
+
+      // this.arrayTemps = list;
+      
+      for(let i = 0; i < 24; i++) {
+        this.arrayTemps[i] = list[i];
+      }
+      console.log(this.arrayTemps)
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+ },
+ mounted() {
+    const box = this.$refs.weatherBox;
+    if (box) {
+      box.addEventListener('wheel', this.handleWheel, { passive: false });
+    }
+  },
+  beforeUnmount() {
+    const box = this.$refs.weatherBox;
+    if (box) {
+      box.removeEventListener('wheel', this.handleWheel);
+    }
+  },
+  methods: {
+    Unix_timestamp(dt) {
+      let date = new Date(dt * 1000);
+      let hour = "0" + date.getHours();
+      // return hour.substr(-2) + "시" // ❌ deprecated 경고 발생
+      return hour.substring(hour.length - 2) + "시"
+    },
+    handleWheel(e) {
+      if (e.deltaY !== 0) {
+        e.preventDefault();
+        this.$refs.weatherBox.scrollLeft += e.deltaY;
+        // this.$refs.weatherBox.scrollBy({ left: 100, behavior: 'smooth' });
+      }
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -316,21 +372,34 @@ export default {
         }
       }
     }
-
     .timelyWeatherBox {
       display: flex;
       align-items: center;
       width: calc(100% - 70px);
       height: 65%;
       padding: 0 30px;
+      /* overflow-x: auto; */
+      overflow: scroll;
+      scroll-behavior: smooth;
+      
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      &::-webkit-scrollbar {
+        display: none;
+      }
 
       .timelyWeather {
         display: flex;
         width: 126px;
+        min-width: 126px;
         height: 70px;
         background-color: #0989ff;
         border-radius: 20px;
+        margin-left: 15px;
 
+        &:first-child {
+          margin-left: 0;
+        }
         .icon {
           @include center;
           width: 45%;
