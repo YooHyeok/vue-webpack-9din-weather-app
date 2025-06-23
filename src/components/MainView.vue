@@ -19,7 +19,7 @@
       </div>
       <div class="weatherBox">
         <div class="weatherDegree">
-          <p>10&deg;</p> <!-- &deg;: html 특수기호 -->
+          <p>{{ Math.round(currentTemp) }}&deg;</p> <!-- &deg;: html 특수기호 -->
         </div>
         <div class="weatherIcon">
           <img
@@ -29,10 +29,10 @@
         <div class="weatherData">
           <div
             class="detailData"
-            v-for="Temporary in TemporaryData"
-            :key="Temporary.title">
-            <p>{{ Temporary.title }}</p>
-            <p>{{ Temporary.value }}</p>
+            v-for="temporary in temporaryData"
+            :key="temporary.title">
+            <p>{{ temporary.title }}</p>
+            <p>{{ temporary.value }}</p>
           </div>
         </div>
       </div>
@@ -88,6 +88,8 @@ export default {
   return {
     // 현재 시간을 나타내기 위한 Dayjs 플러그인 사용
     currentTime: dayjs().format("YYYY. MM. DD. ddd"),
+    // 현재 시간에 다른 현재 온도 데이터
+    currentTemp: "",
     // 상세 날씨 데이터를 받아주는 데이터 할당
     temp: [],
     icons: [],
@@ -120,8 +122,16 @@ export default {
       )
       .then((response) => {
         console.log(response);
-        const {data: {name, sys: {country}}} = response
+        const {data: { name, sys: {country}, main: { temp, humidity, feels_like }, wind: { speed } } } = response
+        
         this.cityName = `${name} (${country})`
+
+        this.currentTemp = temp
+
+        this.temporaryData[0].value = humidity + "%"
+        this.temporaryData[1].value = speed + "m/s"
+        this.temporaryData[2].title = "체감온도"
+        this.temporaryData[2].value = feels_like + "도"
       })
       .catch((error) => {
         console.log(error);
