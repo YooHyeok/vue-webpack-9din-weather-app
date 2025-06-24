@@ -2,8 +2,8 @@
   <div class="rightContainer">
     <div id="cityNameBox">
       <div class="cityName">
-        <p>San Fransisco</p>
-        <p>Jan 28, 2022</p>
+        <p>{{ cityName }}</p>
+        <p>{{ currentTime }}</p>
       </div>
     </div>
     <div id="contentsBox">
@@ -51,11 +51,77 @@
 </template>
 <!-- 카카오맵 api 지도 렌더링 컴포넌트 -->
 <script>
+import axios from 'axios';
+import dayjs from 'dayjs';
 import Map from '~/components/options/Map.vue';
+import "dayjs/locale/ko"
+dayjs.locale("ko"); // 한국어 locale  글로벌 설정
 export default {
   components: {
     Map
-  }
+  },
+  data() {
+    return {
+      // 현재 시간을 나타내기 위한 Dayjs 플러그인 사용
+      currentTime: dayjs().format("YYYY. MM. DD. ddd"),
+      // 현재 시간에 다른 현재 온도 데이터
+      currentTemp: "",
+      // 상세 날씨 데이터를 받아주는 데이터 할당
+      temp: [],
+      arrayTemps: [],
+      icons: [],
+      cityName: "",
+      
+      // 임시 데이터
+      temporaryData: [
+        {
+          title: '습도',
+          value: '88%'
+        },
+        {
+          title: '풍속',
+          value: '10m/s'
+        },
+        {
+          title: '풍향',
+          value: 'WS'
+        },
+      ]
+    }
+  },
+  created() {
+  const API_KEY = "32c7ade76f0e3f495584cbb0d0cd1efe";
+    let initialLat = 36.5683;
+    let initialLon = 126.9778;
+    // get() 메서드를 통해서 우리가 필요로하는 API 데이터를 호출한다.
+    try {
+      (async () => {
+
+        const response = await axios.get(
+          `https://api.openweathermap.org/data/2.5/weather?lat=${initialLat}&lon=${initialLon}&appid=${API_KEY}&units=metric`
+        )
+        const { 
+          data:{
+            name,
+            main: {
+              feels_like // 초기 체감온도 데이터
+            },
+            sys: {
+              country,
+              sunrise, // 일출시간 데이터
+              sunset // 일몰시간 데이터
+            },
+            visibility // 가시거리
+          }
+        } = response
+        
+        this.cityName = `${name} (${country})`
+
+      }) ();
+    } catch (error) {
+      console.error(error)
+    }
+ },
 };
 </script>
 
