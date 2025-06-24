@@ -8,8 +8,8 @@
 </template>
 
 <script>
-import MainView from '../components/MainView.vue';
-import SubView from '../components/SubView.vue';
+import MainView from '../components/options/MainView.vue';
+import SubView from '../components/options/SubView.vue';
 
 export default {
   components: {

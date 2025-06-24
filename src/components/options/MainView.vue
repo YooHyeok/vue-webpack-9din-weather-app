@@ -131,7 +131,6 @@ export default {
         `https://api.openweathermap.org/data/2.5/weather?lat=${initialLat}&lon=${initialLon}&appid=${API_KEY}&units=metric`
       )
       .then((response) => {
-        console.log(response);
         const {data: { name, sys: {country}, main: { temp, humidity, feels_like }, wind: { speed } } } = response
 
         this.cityName = `${name} (${country})`
@@ -152,7 +151,6 @@ export default {
       `https://api.openweathermap.org/data/2.5/forecast?lat=${initialLat}&lon=${initialLon}&appid=${API_KEY}&units=metric`
     )
     .then((response) => {
-      console.log(response);
       const {data: { list } } = response
 
       // this.arrayTemps = list;

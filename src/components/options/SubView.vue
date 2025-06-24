@@ -51,7 +51,7 @@
 </template>
 <!-- 카카오맵 api 지도 렌더링 컴포넌트 -->
 <script>
-import Map from '~/components/Map.vue';
+import Map from '~/components/options/Map.vue';
 export default {
   components: {
     Map
