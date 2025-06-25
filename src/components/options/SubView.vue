@@ -20,21 +20,22 @@
       <div class="weatherBox">
         <!-- 날씨 api 데이트 활용 - 현재 온도에 대한 체감 온도를 출력 -->
         <div class="airCondition">
-          <p>매우 추움</p>
+          <p>{{ feeling }}</p>
         </div>
         <div class="detail">
           <div class="title">
-            <p>Detail Temperatures</p>
+            <p>🌈상세한 날씨 데이터🌞</p>
           </div>
-          <div class="data">
+          <div
+            class="data"
+            v-for="(detailData, index) in subWeatherData"
+            :key="index">
             <div class="dataName">
-              <p>p1</p>
-              <p>p2</p>
+              <p></p>
+              <p>{{ detailData.name }}</p>
             </div>
             <div class="dataValue">
-              <p>
-                <span></span> &deg;
-              </p>
+              <p>{{ detailData.value }}</p><span></span> &deg;
             </div>
           </div>
         </div>
@@ -62,31 +63,10 @@ export default {
   },
   data() {
     return {
-      // 현재 시간을 나타내기 위한 Dayjs 플러그인 사용
-      currentTime: dayjs().format("YYYY. MM. DD. ddd"),
-      // 현재 시간에 다른 현재 온도 데이터
-      currentTemp: "",
-      // 상세 날씨 데이터를 받아주는 데이터 할당
-      temp: [],
-      arrayTemps: [],
-      icons: [],
+      currentTime: dayjs().format("YYYY. MM. DD. ddd"), // 현재 시간을 나타내기 위한 Dayjs 플러그인 사용
       cityName: "",
-      
-      // 임시 데이터
-      temporaryData: [
-        {
-          title: '습도',
-          value: '88%'
-        },
-        {
-          title: '풍속',
-          value: '10m/s'
-        },
-        {
-          title: '풍향',
-          value: 'WS'
-        },
-      ]
+      feeling: "",
+      subWeatherData: []
     }
   },
   created() {
@@ -114,6 +94,31 @@ export default {
             visibility // 가시거리
           }
         } = response
+
+        switch (true) {
+          case feels_like <= 0: this.feeling = "매우 추움"
+            break;
+          case feels_like <= 10: this.feeling = "추움"
+            break;
+          case feels_like <= 15: this.feeling = "쌀쌀함"
+            break;
+          case feels_like <= 20: this.feeling = "신선함"
+            break;
+          case feels_like <= 25: this.feeling = "보통"
+            break;
+          case feels_like <= 30: this.feeling = "더움"
+            break;
+          case feels_like > 30: this.feeling = "매우 더움"
+            break;
+        }
+
+        let isPrcessedData = [
+          { name: "일출시간", value: this.Unix_timestamp(sunrise) },
+          { name: "일몰시간", value: this.Unix_timestamp(sunset) },
+          { name: "가시거리", value: visibility.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") + "M" },
+        ]
+        console.log(isPrcessedData)
+        this.subWeatherData = isPrcessedData;
         
         this.cityName = `${name} (${country})`
 
@@ -122,6 +127,21 @@ export default {
       console.error(error)
     }
  },
+ methods: {
+    Unix_timestamp(dt) {
+      let date = new Date(dt * 1000);
+      let hour = "0" + date.getHours();
+      // return hour.substr(-2) + "시" // ❌ deprecated 경고 발생
+      return hour.substring(hour.length - 2) + "시"
+    },
+    handleWheel(e) {
+      if (e.deltaY !== 0) {
+        e.preventDefault();
+        this.$refs.weatherBox.scrollLeft += e.deltaY;
+        // this.$refs.weatherBox.scrollBy({ left: 100, behavior: 'smooth' });
+      }
+    }
+  }
 };
 </script>
 
