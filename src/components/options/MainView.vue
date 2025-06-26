@@ -179,8 +179,9 @@ export default {
   methods: {
     Unix_timestamp(dt) {
       let date = new Date(dt * 1000);
-      let hour = "0" + date.getHours();
       // return hour.substr(-2) + "시" // ❌ deprecated 경고 발생
+      // let hour = "0" + date.getHours(); // 019시를 19시로 출력하는 방법1.
+      let hour = date.getHours().toString().padStart(2, "0"); // 019시를 19시로 출력하는 방법2.
       return hour.substring(hour.length - 2) + "시"
     },
     handleWheel(e) {
@@ -251,6 +252,7 @@ export default {
         button {
           width: 112px;
           height: 35px;
+          border: 0;
           border-radius: 7.5px;
           outline: 0;
 
