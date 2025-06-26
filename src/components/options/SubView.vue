@@ -95,7 +95,7 @@ export default {
           }
         } = response
 
-        switch (true) {
+        /* switch (true) {
           case feels_like <= 0: this.feeling = "매우 추움"
             break;
           case feels_like <= 10: this.feeling = "추움"
@@ -110,7 +110,17 @@ export default {
             break;
           case feels_like > 30: this.feeling = "매우 더움"
             break;
+        } */
+
+        const tempPoints = [0, 10, 15, 20, 25, 30] // 체감 온도 분기 기준점
+        const labels = ["매우 추움", "추움", "쌀쌀함", "신선함", "보통", "더움", "매우 더움"] // 체감 온도 분기 문구
+
+        let index = 0;
+        for (const point of tempPoints) { // 배열 요소 순회 및 비교 - 조건 맞다면 중단, 맞지 않다면 index 증가
+          if(feels_like <= point) break;
+          index++; // 모든 요소의 조건이 모두 일치하지 않는다면 최대값은 6(매우 더움)
         }
+        this.feeling = labels[index];
 
         let isPrcessedData = [
           { name: "일출시간", value: this.Unix_timestamp(sunrise) },
@@ -130,8 +140,9 @@ export default {
  methods: {
     Unix_timestamp(dt) {
       let date = new Date(dt * 1000);
-      let hour = "0" + date.getHours();
       // return hour.substr(-2) + "시" // ❌ deprecated 경고 발생
+      // let hour = "0" + date.getHours(); // 019시를 19시로 출력하는 방법1.
+      let hour = date.getHours().toString().padStart(2, "0"); // 019시를 19시로 출력하는 방법2.
       return hour.substring(hour.length - 2) + "시"
     },
     handleWheel(e) {
