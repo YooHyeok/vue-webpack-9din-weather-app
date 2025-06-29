@@ -132,7 +132,6 @@ export default {
 
         temporaryData.value[0].value = humidity + "%"
         temporaryData.value[1].value = speed + "m/s"
-        temporaryData.value[2].title = "체감온도"
         temporaryData.value[2].value = feels_like + "도"
       })
       .catch((error) => {

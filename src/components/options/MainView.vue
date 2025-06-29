@@ -124,45 +124,44 @@ export default {
  },
  created() {
   const API_KEY = "32c7ade76f0e3f495584cbb0d0cd1efe";
-    let initialLat = 36.5683;
-    let initialLon = 126.9778;
-    // get() 메서드를 통해서 우리가 필요로하는 API 데이터를 호출한다.
-    axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${initialLat}&lon=${initialLon}&appid=${API_KEY}&units=metric`
-      )
-      .then((response) => {
-        const {data: { name, sys: {country}, main: { temp, humidity, feels_like }, wind: { speed } } } = response
-
-        this.cityName = `${name} (${country})`
-
-        this.currentTemp = temp
-
-        this.temporaryData[0].value = humidity + "%"
-        this.temporaryData[1].value = speed + "m/s"
-        this.temporaryData[2].title = "체감온도"
-        this.temporaryData[2].value = feels_like + "도"
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    // 시간대별 날씨 데이터 제어
-    axios.get(
-      `https://api.openweathermap.org/data/2.5/forecast?lat=${initialLat}&lon=${initialLon}&appid=${API_KEY}&units=metric`
+  let initialLat = 36.5683;
+  let initialLon = 126.9778;
+  // get() 메서드를 통해서 우리가 필요로하는 API 데이터를 호출한다.
+  axios.get(
+      `https://api.openweathermap.org/data/2.5/weather?lat=${initialLat}&lon=${initialLon}&appid=${API_KEY}&units=metric`
     )
     .then((response) => {
-      const {data: { list } } = response
+      const {data: { name, sys: {country}, main: { temp, humidity, feels_like }, wind: { speed } } } = response
 
-      // this.arrayTemps = list;
-      
-      for(let i = 0; i < 24; i++) {
-        this.arrayTemps[i] = list[i];
-      }
-      console.log(this.arrayTemps)
+      this.cityName = `${name} (${country})`
+
+      this.currentTemp = temp
+
+      this.temporaryData[0].value = humidity + "%"
+      this.temporaryData[1].value = speed + "m/s"
+      this.temporaryData[2].value = feels_like + "도"
     })
     .catch((error) => {
       console.log(error);
     });
+
+  // 시간대별 날씨 데이터 제어
+  axios.get(
+    `https://api.openweathermap.org/data/2.5/forecast?lat=${initialLat}&lon=${initialLon}&appid=${API_KEY}&units=metric`
+  )
+  .then((response) => {
+    const {data: { list } } = response
+
+    // this.arrayTemps = list;
+    
+    for(let i = 0; i < 24; i++) {
+      this.arrayTemps[i] = list[i];
+    }
+    console.log(this.arrayTemps)
+  })
+  .catch((error) => {
+    console.log(error);
+  });
  },
  mounted() {
     const box = this.$refs.weatherBox;
