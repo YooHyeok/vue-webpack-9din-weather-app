@@ -24,7 +24,26 @@ export default {
   /* [getters]: 계산된 상태의 데이터를 만들어내는 속성 - computed와 유사한 기능 */
   getters: {},
   /* [mutations]: 변이 메소드, 우리가 관리하는 데이터인 state를 오로지 이곳 mutations 에서만 변경시킬 수 있다. */
-  mutations: {},
+  mutations: {
+    SET_CITYNAME(state, payload) {
+      state.cityName = payload
+    },
+    SET_CURRENT_WEATHER(state, payload) {
+      state.currentWeather.currentTemp = Math.round(payload.temp)
+      state.currentWeather.currentHumidity = payload.humidity
+      state.currentWeather.currentWindSpeed = payload.wind_speed
+      state.currentWeather.currentFeelsLike = Math.round(payload.feels_like)
+      state.currentWeather.currentSunrise = payload.sunrise;
+      state.currentWeather.currentSunset = payload.sunset;
+      state.currentWeather.currentVisibility = payload.visibility
+    },  
+    SET_TIMELY_WEATHER(state, payload) {
+      state.hourlyWeather = payload
+    },
+    SET_IMAGEPATH(state, payload) {
+      state.images = payload;
+    }
+  },
   /* 
   [actions]: 특정한 데이터를 직접적으로 수정하는것이 허용되지 않으며, 비동기로 동작한다.
     - mutations처럼 state를 바로 불러올 수 없고, context라는 객체 데이터를 호출 후 참조하여 데이터를 불러온다.
@@ -45,16 +64,33 @@ export default {
         }
         const api_url = (endpoint) => `https://api.openweathermap.org/data/2.5/${endpoint}?lat=${initialLat}&lon=${initialLon}&appid=${API_KEY}&units=metric`
         // get() 메서드를 통해서 우리가 필요로하는 API 데이터를 호출한다.
-        const res1 = await axios.get(api_url(ENDPOINT.WEATHER))
+
+        const {
+          data: { 
+            name, 
+            sys: { country, sunrise, sunset }, 
+            main: { temp, humidity, feels_like }, 
+            wind: { speed: wind_speed },
+            visibility
+          } 
+        } = await axios.get(api_url(ENDPOINT.WEATHER))
+        
+        const current = { temp, humidity, wind_speed, feels_like, sunrise, sunset, visibility}
 
         // 시간대별 날씨 데이터 제어
         const res2 = await axios.get(api_url(ENDPOINT.FORECAST))
 
         const images = new Array()
-        for (let i = 0; i < 48; i++) {
-          const weatherIcon = res2.data.list[0].weather[0].icon
-          images[i] = `src/assets/images${weatherIcon}.png`
+        for (let i = 0; i < res2.data?.list.length; i++) {
+          const weatherIcon = res2.data?.list[i]?.weather[0]?.icon
+          images[i] = require(`../assets/images/${weatherIcon}.png`).default;
         }
+       
+
+        context.commit('SET_CITYNAME', `${name} (${country})`) // 두번째 매개변수: payload
+        context.commit('SET_IMAGEPATH', images) // 두번째 매개변수: payload
+        context.commit('SET_CURRENT_WEATHER', current) // 두번째 매개변수: payload
+        context.commit('SET_TIMELY_WEATHER', res2.data.list) // 두번째 매개변수: payload
       } catch(error) {
         console.error(error)
       }
