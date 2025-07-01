@@ -6,6 +6,10 @@ export default {
   namespaced: true,
   /* [state]: 실제로 취급해야하는 데이터 */
   state: {
+    position: {
+      lat: 37.5683,
+      lon: 126.9778
+    },
     cityName: 'Seoul',
     currentWeather: {
       /* MainView.vue */
@@ -25,6 +29,10 @@ export default {
   getters: {},
   /* [mutations]: 변이 메소드, 우리가 관리하는 데이터인 state를 오로지 이곳 mutations 에서만 변경시킬 수 있다. */
   mutations: {
+    SET_LATLON(state, payload) {
+      state.position.lat = payload.Ma;
+      state.position.lon = payload.La;
+    },
     SET_CITYNAME(state, payload) {
       state.cityName = payload
     },
@@ -56,8 +64,9 @@ export default {
     async FETCH_OPENWEATHER_API(context) {
       try {
         const API_KEY = "32c7ade76f0e3f495584cbb0d0cd1efe";
-        let initialLat = 36.5683;
-        let initialLon = 126.9778;
+        console.log(context)
+        let initialLat = context.state.position.lat || 36.5683;
+        let initialLon = context.state.position.lon || 126.9778;
         const ENDPOINT = {
           WEATHER: 'weather',
           FORECAST: 'forecast',
@@ -87,7 +96,7 @@ export default {
         }
        
 
-        context.commit('SET_CITYNAME', `${name} (${country})`) // 두번째 매개변수: payload
+        // context.commit('SET_CITYNAME', `${name} (${country})`) // 두번째 매개변수: payload
         context.commit('SET_IMAGEPATH', images) // 두번째 매개변수: payload
         context.commit('SET_CURRENT_WEATHER', current) // 두번째 매개변수: payload
         context.commit('SET_TIMELY_WEATHER', res2.data.list) // 두번째 매개변수: payload
