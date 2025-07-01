@@ -23,7 +23,7 @@
         </div>
         <div class="weatherIcon">
           <img
-            src="~/assets/43.png"
+            :src="images[0]"
             alt="MainLogo" />
         </div>
         <div class="weatherData">
@@ -45,34 +45,30 @@
       <div
         ref="weatherBox"
         class="timelyWeatherBox">
-        <!-- <div class="timelyWeather"> -->
         <div
           class="timelyWeather"
           v-for="(temp, index) in arrayTemps"
           :key="index">
           <div class="icon">
             <img
-              src="~/assets/29.png"
+              :src="images[index]"
               alt="" />
           </div>
           <!-- 날씨 api 호출시 상세 데이터를 출력할 공간 -->
           <div class="data">
             <p class="time">
-              {{ Unix_timestamp(temp.dt) }}
+              {{ Unix_timestamp(temp?.dt) }}
             </p>
             <p class="currentDegree">
-              {{ temp.main.temp }}&deg;
+              {{ temp?.main?.temp }}&deg;
             </p>
-            <!-- <p class="currentDegree">
-              32&deg;
-            </p> -->
             <div>
               <!-- 습도 아이콘 -->
               <img
                 src="~/assets/drop.png"
                 alt="" />
               <p class="fall">
-                {{ temp.main.humidity }}%
+                {{ temp?.main?.humidity }}%
               </p>
             </div>
           </div>
@@ -88,7 +84,6 @@
   </div>
 </template>
 <script>
-import axios from "axios"
 import dayjs from "dayjs" //  npm install dayjs
 import "dayjs/locale/ko"
 dayjs.locale("ko"); // 한국어 locale  글로벌 설정
@@ -106,12 +101,14 @@ export default {
   */
   await this.$store.dispatch("openWeatherApi/FETCH_OPENWEATHER_API"); // Vuex Store에 선언된 api 호출 완료
   const { currentTemp, currentHumidity, currentWindSpeed, currentFeelsLike } = this.$store.state.openWeatherApi.currentWeather;
-      this.currentTemp = currentTemp
-      this.temporaryData[0].value = currentHumidity + "%"
-      this.temporaryData[1].value = currentWindSpeed + "m/s"
-      this.temporaryData[2].value = Math.round(currentFeelsLike) + "도"
-      this.arrayTemps = this.$store.state.openWeatherApi.hourlyWeather;
-      this.arrayIcons = this.$store.state.openWeatherApi.imagePath;
+  console.log(`created: ${currentTemp}, ${currentHumidity}, ${currentWindSpeed}, ${currentFeelsLike}`)
+  this.cityName = this.$store.state.openWeatherApi.cityName;
+  this.currentTemp = currentTemp
+  this.temporaryData[0].value = currentHumidity + "%"
+  this.temporaryData[1].value = currentWindSpeed + "m/s"
+  this.temporaryData[2].value = Math.round(currentFeelsLike) + "도"
+  this.arrayTemps = this.$store.state.openWeatherApi.hourlyWeather;
+  this.images = this.$store.state.openWeatherApi.imagePath;
  },
 computed: { // 마커를 선택했을 때, 레이아웃에 보여지는 도시이름
   cityName() {
@@ -121,7 +118,7 @@ computed: { // 마커를 선택했을 때, 레이아웃에 보여지는 도시�
     const { currentTemp } = this.$store.state.openWeatherApi.currentWeather;
     return currentTemp;
   },
-  arraytemps() {
+  arrayTemps() {
     return this.$store.state.openWeatherApi.hourlyWeather;
   },
   temporaryData() {
