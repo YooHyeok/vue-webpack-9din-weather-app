@@ -64,75 +64,36 @@ export default {
     return {
       currentTime: dayjs().format("YYYY. MM. DD. ddd"), // 현재 시간을 나타내기 위한 Dayjs 플러그인 사용
       feeling: "",
-      subWeatherData: []
+      subWeatherData: [],
+      reRender: false
     }
   },
   async created() {
-    await this.$store.dispatch("openWeatherApi/FETCH_OPENWEATHER_API"); // Vuex Store에 선언된 api 호출 완료
-    const { currentFeelsLike, currentSunrise, currentSunset, currentVisibility } = this.$store.state.openWeatherApi.currentWeather;
-
-    this.cityName = this.$store.state.openWeatherApi.cityName; // 초기 도시이름 데이터
-    this.isFeelLikeTemp = currentFeelsLike
-    this.isTimeOfSunrise = currentSunrise;
-    this.isTimeOfSunSet = currentSunset;
-    this.isLineOfSight = currentVisibility;
-
-    /* switch (true) {
-      case currentFeelsLike <= 0: this.feeling = "매우 추움"
-        break;
-      case currentFeelsLike <= 10: this.feeling = "추움"
-        break;
-      case currentFeelsLike <= 15: this.feeling = "쌀쌀함"
-        break;
-      case currentFeelsLike <= 20: this.feeling = "신선함"
-        break;
-      case currentFeelsLike <= 25: this.feeling = "보통"
-        break;
-      case currentFeelsLike <= 30: this.feeling = "더움"
-        break;
-      case currentFeelsLike > 30: this.feeling = "매우 더움"
-        break;
-    } */
-
-    const tempPoints = [0, 10, 15, 20, 25, 30] // 체감 온도 분기 기준점
-    const labels = ["매우 추움", "추움", "쌀쌀함", "신선함", "보통", "더움", "매우 더움"] // 체감 온도 분기 문구
-
-    let index = 0;
-    for (const point of tempPoints) { // 배열 요소 순회 및 비교 - 조건 맞다면 중단, 맞지 않다면 index 증가
-      if(this.isFeelLikeTemp <= point) break;
-      index++; // 모든 요소의 조건이 모두 일치하지 않는다면 최대값은 6(매우 더움)
-    }
-    this.feeling = labels[index];
-
-    let isPrcessedData = [
-      { name: "일출시간", value: this.Unix_timestamp(this.isTimeOfSunrise) },
-      { name: "일몰시간", value: this.Unix_timestamp(this.isTimeOfSunSet) },
-      { name: "가시거리", value: this.isLineOfSight.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") + "M" },
-    ]
-    this.subWeatherData = isPrcessedData;
- },
- computed: {
-  cityName() {
-    return this.$store.state.openWeatherApi.cityName;
+    this.fetchOpenWeather();
   },
-  isFeelLikeTemp() {
-    const { currentFeelsLike } = this.$store.state.openWeatherApi.currentWeather;
-    return currentFeelsLike;
+  computed: {
+    cityName() {
+      this.fetchOpenWeather();
+      return this.$store.state.openWeatherApi.cityName;
+    },
+    isFeelLikeTemp() {
+      const { currentFeelsLike } = this.$store.state.openWeatherApi.currentWeather;
+      return currentFeelsLike;
+    },
+    isTimeOfSunrise() {
+      const { currentSunrise } = this.$store.state.openWeatherApi.currentWeather;
+      return currentSunrise;
+    },
+    isTimeOfSunSet() {
+      const { currentSunset } = this.$store.state.openWeatherApi.currentWeather;
+      return currentSunset;
+    },
+    isLineOfSight() {
+      const { currentVisibility } = this.$store.state.openWeatherApi.currentWeather;
+      return currentVisibility;
+    },
   },
-  isTimeOfSunrise() {
-    const { currentSunrise } = this.$store.state.openWeatherApi.currentWeather;
-    return currentSunrise;
-  },
-  isTimeOfSunSet() {
-    const { currentSunset } = this.$store.state.openWeatherApi.currentWeather;
-    return currentSunset;
-  },
-  isLineOfSight() {
-    const { currentVisibility } = this.$store.state.openWeatherApi.currentWeather;
-    return currentVisibility;
-  }
- },
- methods: {
+  methods: {
     Unix_timestamp(dt) {
       console.log("this: ", this)
       let date = new Date(dt * 1000);
@@ -141,12 +102,49 @@ export default {
       let hour = date.getHours().toString().padStart(2, "0"); // 019시를 19시로 출력하는 방법2.
       return hour.substring(hour.length - 2) + "시"
     },
-    handleWheel(e) {
-      if (e.deltaY !== 0) {
-        e.preventDefault();
-        this.$refs.weatherBox.scrollLeft += e.deltaY;
-        // this.$refs.weatherBox.scrollBy({ left: 100, behavior: 'smooth' });
+    fetchOpenWeather() {
+      const { currentFeelsLike, currentSunrise, currentSunset, currentVisibility } = this.$store.state.openWeatherApi.currentWeather;
+
+      this.cityName = this.$store.state.openWeatherApi.cityName; // 초기 도시이름 데이터
+      this.isFeelLikeTemp = currentFeelsLike
+      this.isTimeOfSunrise = currentSunrise;
+      this.isTimeOfSunSet = currentSunset;
+      this.isLineOfSight = currentVisibility;
+
+      /* switch (true) {
+        case currentFeelsLike <= 0: this.feeling = "매우 추움"
+          break;
+        case currentFeelsLike <= 10: this.feeling = "추움"
+          break;
+        case currentFeelsLike <= 15: this.feeling = "쌀쌀함"
+          break;
+        case currentFeelsLike <= 20: this.feeling = "신선함"
+          break;
+        case currentFeelsLike <= 25: this.feeling = "보통"
+          break;
+        case currentFeelsLike <= 30: this.feeling = "더움"
+          break;
+        case currentFeelsLike > 30: this.feeling = "매우 더움"
+          break;
+      } */
+
+      const tempPoints = [0, 10, 15, 20, 25, 30] // 체감 온도 분기 기준점
+      const labels = ["매우 추움", "추움", "쌀쌀함", "신선함", "보통", "더움", "매우 더움"] // 체감 온도 분기 문구
+
+      let index = 0;
+      for (const point of tempPoints) { // 배열 요소 순회 및 비교 - 조건 맞다면 중단, 맞지 않다면 index 증가
+        if(this.isFeelLikeTemp <= point) break;
+        index++; // 모든 요소의 조건이 모두 일치하지 않는다면 최대값은 6(매우 더움)
       }
+      console.log("index: ", index)
+      this.feeling = labels[index];
+
+      let isPrcessedData = [
+        { name: "일출시간", value: this.Unix_timestamp(this.isTimeOfSunrise) },
+        { name: "일몰시간", value: this.Unix_timestamp(this.isTimeOfSunSet) },
+        { name: "가시거리", value: this.isLineOfSight.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") + "M" },
+      ]
+      this.subWeatherData = isPrcessedData;
     }
   }
 };
