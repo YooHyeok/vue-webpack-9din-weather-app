@@ -64,7 +64,6 @@ export default {
     async FETCH_OPENWEATHER_API(context) {
       try {
         const API_KEY = "32c7ade76f0e3f495584cbb0d0cd1efe";
-        console.log(context)
         let initialLat = context.state.position.lat || 36.5683;
         let initialLon = context.state.position.lon || 126.9778;
         const ENDPOINT = {
