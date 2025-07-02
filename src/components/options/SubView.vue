@@ -145,13 +145,6 @@ export default {
       let hour = date.getHours().toString().padStart(2, "0"); // 019시를 19시로 출력하는 방법2.
       return hour.substring(hour.length - 2) + "시"
     },
-    handleWheel(e) {
-      if (e.deltaY !== 0) {
-        e.preventDefault();
-        this.$refs.weatherBox.scrollLeft += e.deltaY;
-        // this.$refs.weatherBox.scrollBy({ left: 100, behavior: 'smooth' });
-      }
-    }
   }
 };
 </script>
