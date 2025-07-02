@@ -1,8 +1,8 @@
 <template>
   <div class="wrap">
     <div class="container">
-      <MainView />
-      <SubView />
+      <MainView v-if="dispatchComplete" />
+      <SubView v-if="dispatchComplete" />
     </div>
   </div>
 </template>
@@ -19,6 +19,15 @@ export default {
   components: {
     MainView,
     SubView
+  },
+  data() {
+    return {
+      dispatchComplete: false
+    }
+  },
+  async created() {
+    await this.$store.dispatch("openWeatherApi/FETCH_OPENWEATHER_API"); // Vuex Store에 선언된 api 호출 완료
+    this.dispatchComplete = true;
   }
 };
 </script>
