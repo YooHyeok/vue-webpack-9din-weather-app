@@ -96,19 +96,16 @@ export default {
  },
  async created() {
   /* 
-    Vuex Store의 Mutations를 호출할 때는 commit() 메소드를 사용한다.
-    Vuex Store의 Actions를 호출할 때는 dispatch() 메소드를 사용한다.
+  computed에 의해 값이 변경되므로 아래 코드는 사실상 의미가 없음
   */
-  await this.$store.dispatch("openWeatherApi/FETCH_OPENWEATHER_API"); // Vuex Store에 선언된 api 호출 완료
-  const { currentTemp, currentHumidity, currentWindSpeed, currentFeelsLike } = this.$store.state.openWeatherApi.currentWeather;
-  console.log(`created: ${currentTemp}, ${currentHumidity}, ${currentWindSpeed}, ${currentFeelsLike}`)
-  this.cityName = this.$store.state.openWeatherApi.cityName;
-  this.currentTemp = currentTemp
-  this.temporaryData[0].value = currentHumidity + "%"
-  this.temporaryData[1].value = currentWindSpeed + "m/s"
-  this.temporaryData[2].value = Math.round(currentFeelsLike) + "도"
-  this.arrayTemps = this.$store.state.openWeatherApi.hourlyWeather;
-  this.images = this.$store.state.openWeatherApi.imagePath;
+  // const { currentTemp, currentHumidity, currentWindSpeed, currentFeelsLike } = this.$store.state.openWeatherApi.currentWeather;
+  // this.cityName = this.$store.state.openWeatherApi.cityName;
+  // this.currentTemp = currentTemp
+  // this.temporaryData[0].value = currentHumidity + "%"
+  // this.temporaryData[1].value = currentWindSpeed + "m/s"
+  // this.temporaryData[2].value = Math.round(currentFeelsLike) + "도"
+  // this.arrayTemps = this.$store.state.openWeatherApi.hourlyWeather;
+  // this.images = this.$store.state.openWeatherApi.imagePath;
  },
 computed: { // 마커를 선택했을 때, 레이아웃에 보여지는 도시이름
   cityName() {
